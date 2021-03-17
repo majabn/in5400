@@ -86,10 +86,10 @@ def train_epoch(model,  trainloader,  criterion, device, optimizer ):
     model.train()
 
     losses = []
-    print("Count to: ", len(trainloader))
+    #print("Count to: ", len(trainloader))
     for batch_idx, data in enumerate(trainloader):
       #TODO
-      print(batch_idx)
+      #print(batch_idx)
       inputs=data['image']
       labels=data['label']
 
