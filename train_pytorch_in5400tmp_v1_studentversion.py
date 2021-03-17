@@ -166,7 +166,7 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
     print("Labels: ",concat_labels)
     print("Predictions: ",concat_pred)
     for c in range(numcl):
-      avgprecs[c]=average_precision_score(concat_labels[:,c], concat_pred)
+      avgprecs[c]=average_precision_score(concat_labels[:,c], concat_pred[:,c])
 
     return avgprecs, np.mean(losses), concat_labels, concat_pred, fnames
 
