@@ -163,8 +163,6 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
               concat_labels=np.vstack((concat_labels,labels[i].cpu()))
           fnames.extend(data['filename'])
           curcount+= labels.shape[0]
-    print("Labels: ",concat_labels)
-    print("Predictions: ",concat_pred)
     for c in range(numcl):
       avgprecs[c]=average_precision_score(concat_labels[:,c], concat_pred[:,c])
 
@@ -187,7 +185,7 @@ def traineval2_model_nocv(dataloader_train, dataloader_test ,  model ,  criterio
 
     avgloss=train_epoch(model,  dataloader_train,  criterion,  device , optimizer )
     trainlosses.append(avgloss)
-    print(avgloss)
+    #print(avgloss)
 
     if scheduler is not None:
       scheduler.step()
