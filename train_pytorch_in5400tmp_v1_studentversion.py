@@ -159,7 +159,7 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
           for i, d in enumerate(data):
               concat_pred=np.vstack((concat_pred,cpuout[i].cpu()))
               concat_labels=np.vstack((concat_pred,labels[i].cpu()))
-              fnames.append(d['filename'])
+          fnames.extend(data['filename'])
           curcount+= labels.shape[0]
 
     for c in range(numcl):
