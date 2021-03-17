@@ -124,8 +124,8 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
 
     #concat_pred=[np.empty(shape=(0)) for _ in range(numcl)] #prediction scores for each class. each numpy array is a list of scores. one score per image
     #concat_labels=[np.empty(shape=(0)) for _ in range(numcl)] #labels scores for each class. each numpy array is a list of labels. one label per image
-    concat_pred = np.empty((0,numcl))
-    concat_labels = np.empty((0,numcl))
+    concat_pred = np.empty((0,numcl)).to(device)
+    concat_labels = np.empty((0,numcl)).to(device)
     avgprecs=np.zeros(numcl) #average precision for each class
     fnames = [] #filenames as they come out of the dataloader
 
