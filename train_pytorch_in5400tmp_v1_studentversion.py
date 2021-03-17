@@ -265,8 +265,8 @@ def runstuff():
     }
 
 
-    root_dir='./data/VOCdevkit/VOC2012/'
-    #root_dir='/itf-fi-ml/shared/IN5400/dataforall/mandatory1/VOCdevkit/VOC2012/'
+    #root_dir='./data/VOCdevkit/VOC2012/'
+    root_dir='/itf-fi-ml/shared/IN5400/dataforall/mandatory1/VOCdevkit/VOC2012/'
     #datasets
     image_datasets={}
     image_datasets['train']=dataset_voc(root_dir=root_dir,trvaltest=0, transform=data_transforms['train'])
