@@ -230,7 +230,7 @@ def runstuff():
 
     config = dict()
 
-    config['use_gpu'] = False #True #TODO change this to True for training on the cluster, eh
+    config['use_gpu'] = True #True #TODO change this to True for training on the cluster, eh
     config['lr']=0.005
     config['batchsize_train'] = 16
     config['batchsize_val'] = 64
@@ -300,7 +300,8 @@ def runstuff():
 
     #TODO
     # Observe that all parameters are being optimized
-    someoptimizer = optim.SGD(model.parameters(), lr=config['lr'], momentum=0.9)
+    #somelr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer=someoptimizer, mode='min', factor=.3, verbose=True)
+    somelr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=.3, last_epoch=-1, verbose=True)
 
     # Decay LR by a factor of 0.3 every X epochs
     #TODO
