@@ -301,7 +301,7 @@ def runstuff():
     #TODO
     # Observe that all parameters are being optimized
     #somelr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer=someoptimizer, mode='min', factor=.3, verbose=True)
-    somelr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=optimizer, gamma=.3, last_epoch=-1, verbose=True)
+    somelr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=someoptimizer, gamma=.3, last_epoch=-1, verbose=True)
 
     # Decay LR by a factor of 0.3 every X epochs
     #TODO
