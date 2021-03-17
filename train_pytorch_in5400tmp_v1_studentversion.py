@@ -24,6 +24,8 @@ from vocparseclslabels import PascalVOC
 
 from typing import Callable, Optional
 
+from sklearn.metrics import average_precision_score
+
 
 class dataset_voc(Dataset):
     def __init__(self, root_dir, trvaltest, transform=None):
