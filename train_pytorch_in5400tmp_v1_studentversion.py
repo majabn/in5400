@@ -207,7 +207,7 @@ def traineval2_model_nocv(dataloader_train, dataloader_test ,  model ,  criterio
       best_measure=avgperfmeasure
       best_epoch=epoch
       #TODO save your scores
-      best_scores={'epoch': best_epoch, 'weights': copy.deepcopy(model.state_dict()), 'avgperfmeasure': best_measure,
+      best_scores={'epoch': best_epoch, 'weights': model.state_dict(), 'avgperfmeasure': best_measure,
                     'outputs': concat_pred, 'filenames': fnames, 'labels': concat_labels}
 
   torch.save(best_scores, "results_predictions")
