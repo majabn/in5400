@@ -205,8 +205,10 @@ def traineval2_model_nocv(dataloader_train, dataloader_test ,  model ,  criterio
       best_measure=avgperfmeasure
       best_epoch=epoch
       #TODO save your scores
+      best_scores={'epoch': best_epoch, 'weights': copy.deepcopy(model.state_dict()), 'avgperfmeasure': best_measure,
+                    'outputs': concat_pred, 'filenames': fnames, 'labels': concat_labels}
 
-
+  np.save("results_predictions", best_scores)
   return best_epoch, best_measure, bestweights, trainlosses, testlosses, testperfs
 
 
