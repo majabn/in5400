@@ -210,7 +210,7 @@ def traineval2_model_nocv(dataloader_train, dataloader_test ,  model ,  criterio
       best_scores={'epoch': best_epoch, 'weights': copy.deepcopy(model.state_dict()), 'avgperfmeasure': best_measure,
                     'outputs': concat_pred, 'filenames': fnames, 'labels': concat_labels}
 
-  np.save("results_predictions", best_scores)
+  torch.save(best_scores, "results_predictions")
   return best_epoch, best_measure, bestweights, trainlosses, testlosses, testperfs
 
 
