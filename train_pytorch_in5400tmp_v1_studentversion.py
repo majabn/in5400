@@ -160,14 +160,14 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
 
 
           #TODO: collect scores, labels, filenames
-          for i, d in enumerate(data):
+          for i, fn in enumerate(data['filename']):
               concat_pred=np.vstack((concat_pred,cpuout[i].cpu()))
               concat_labels=np.vstack((concat_labels,labels[i].cpu()))
-              fnames.append(data['filename'][i])
+              fnames.append(fn)
           curcount+= labels.shape[0]
     for c in range(numcl):
       avgprecs[c]=average_precision_score(concat_labels[:,c], concat_pred[:,c])
-
+    print(concat_labels.shape)
     return avgprecs, np.mean(losses), concat_labels, concat_pred, fnames
 
 
