@@ -163,7 +163,7 @@ def evaluate_meanavgprecision(model, dataloader, criterion, device, numcl):
           for i, d in enumerate(data):
               concat_pred=np.vstack((concat_pred,cpuout[i].cpu()))
               concat_labels=np.vstack((concat_labels,labels[i].cpu()))
-          fnames.extend(data['filename'])
+              fnames.append(data['filename'][i])
           curcount+= labels.shape[0]
     for c in range(numcl):
       avgprecs[c]=average_precision_score(concat_labels[:,c], concat_pred[:,c])
