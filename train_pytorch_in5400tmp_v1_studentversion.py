@@ -238,7 +238,7 @@ def runstuff():
     config = dict()
 
     config['use_gpu'] = True #True #TODO change this to True for training on the cluster, eh
-    config['lr']=0.005
+    config['lr']=0.0005
     config['batchsize_train'] = 16
     config['batchsize_val'] = 64
     config['maxnumepochs'] = 35
@@ -312,7 +312,7 @@ def runstuff():
     # Decay LR by a factor of 0.3 every X epochs
     #TODO
     #somelr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer=someoptimizer, mode='min', factor=.3, verbose=True)
-    somelr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=someoptimizer, gamma=.3, last_epoch=-1, verbose=True)
+    somelr_scheduler = optim.lr_scheduler.ExponentialLR(optimizer=someoptimizer, gamma=config['scheduler_factor'], last_epoch=-1, verbose=True)
 
     best_epoch, best_measure, bestweights, trainlosses, testlosses, testperfs = traineval2_model_nocv(dataloaders['train'], dataloaders['val'] ,  model ,  lossfct, someoptimizer, somelr_scheduler, num_epochs= config['maxnumepochs'], device = device , numcl = config['numcl'] )
 
