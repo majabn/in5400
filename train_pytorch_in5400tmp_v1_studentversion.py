@@ -238,7 +238,7 @@ def runstuff():
     config = dict()
 
     config['use_gpu'] = True #True #TODO change this to True for training on the cluster, eh
-    config['lr']=0.01
+    config['lr']=0.05
     config['batchsize_train'] = 16
     config['batchsize_val'] = 64
     config['maxnumepochs'] = 35
@@ -377,8 +377,11 @@ def bntoWSconverter(model):
       lastwasconv2= True
       usedeps= 1e-12 # use 1e-12 if you add it to a variance term, and 1e-6 if you add it to a standard deviation term
       #TODO
+      W = module.get_weights()
       # put in here your wsconv2, dont forget to copy convolution weight and, if exists, the convolution bias into your wsconv2
       newconv=wsconv2()
+      W_hat = newconv.get_weights()
+      n_c = W / W_hat
       setbyname2(model,nm,newconv)
     elif isinstance(module,nn.BatchNorm2d):
       if False == lastwasconv2:
