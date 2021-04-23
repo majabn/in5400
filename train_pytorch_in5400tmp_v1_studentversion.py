@@ -211,7 +211,7 @@ def traineval2_model_nocv(dataloader_train, dataloader_test ,  model ,  criterio
                     'outputs': concat_pred, 'filenames': fnames, 'labels': concat_labels}
 
   torch.save(best_scores, "results_predictions")
-  curves = {'losses': testlosses, 'mAP': avgtestperfs}
+  curves = {'trainlosses': trainlosses, 'testlosses': testlosses, 'mAP': avgtestperfs}
   torch.save(curves, "train_test_curves")
   return best_epoch, best_measure, bestweights, trainlosses, testlosses, testperfs
 
