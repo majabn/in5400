@@ -84,6 +84,7 @@ class imageCaptionModel(nn.Module):
 
         imgfeat_processed = self.inputlayer(cnn_features)
         batch_size = cnn_features.shape[0]
+        print(batch_size)
 
 
         if current_hidden_state is None:
