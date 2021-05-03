@@ -5,7 +5,7 @@ from utils.trainer import Trainer
 from utils.validate import plotImagesAndCaptions
 from utils.validate_metrics import validateCaptions
 
-from cocoSource_xcnnfused import imageCaptionModel # here you plug in your modelfile depending on what you have developed: simple rnn, 2 layer, or attention, if you have 3 modelfiles a.py b.py c.py then you do: from a import ... or you have one file with n different imgcapmodels
+from task2_cocoSource_xcnnfused import imageCaptionModel # here you plug in your modelfile depending on what you have developed: simple rnn, 2 layer, or attention, if you have 3 modelfiles a.py b.py c.py then you do: from a import ... or you have one file with n different imgcapmodels
 
 def main(config, modelParam):
     # create an instance of the model you want
