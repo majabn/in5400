@@ -36,7 +36,7 @@ def main(config, modelParam):
 
 ########################################################################################################################
 if __name__ == '__main__':
-    data_dir = '/itf-fi-ml/shared/IN5400/dataforall/mandatory2/data/coco'
+    data_dir = '/itf-fi-ml/shared/IN5400/dataforall/mandatory2/data/coco/'
 
     #train
     modelParam = {
