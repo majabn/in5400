@@ -146,7 +146,7 @@ class RNN_onelayer_simplified(nn.Module):
 
             # for a 2 layer rnn you do this for every kk, but you do this when you are *at the last layer of the rnn* for the current sequence index kk
             # apply the output layer to the updated state
-            logitskk = outputlayer(updatedstate[0,:].to(device='cuda').float()) #note: for LSTM you use only the part which corresponds to the hidden state
+            logitskk = outputlayer(updatedstate[0,:]) #note: for LSTM you use only the part which corresponds to the hidden state
             # find the next predicted output element
             tokens = torch.argmax(logitskk, dim=1)
             logits_series.append(logitskk)
