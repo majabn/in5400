@@ -90,7 +90,7 @@ class imageCaptionModel(nn.Module):
         if current_hidden_state is None:
             #TODO
             # initialize initial_hidden_state=  with correct dims, depends on cellyupe
-            initial_hidden_state=torch.zeros([self.num_rnn_layers, batch_size, self.hidden_state_sizes], dtype=torch.int32)
+            initial_hidden_state=torch.zeros([self.num_rnn_layers, batch_size, self.hidden_state_sizes]).to(device='cuda')
 
         else:
             initial_hidden_state = current_hidden_state
