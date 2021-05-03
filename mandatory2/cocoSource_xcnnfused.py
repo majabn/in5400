@@ -140,7 +140,8 @@ class RNN_onelayer_simplified(nn.Module):
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
             #note that      current_state has 3 dims ( ...len(current_state.shape)==3... ) with first dimension having only 1 element, while the rnn cell needs a state with 2 dims as input
             #TODO
-            updatedstate[0,:] = RNNsimpleCell(hidden_state_size=len(current_state.shape), input_size=len(lvl0input.shape) )  #RNN cell is used here #uses lvl0input and the hiddenstate
+            print(current_state.shape, lvl0input.shape)
+            updatedstate[0,:] = RNNsimpleCell(hidden_state_size=current_state.shape[2], input_size=lvl0input.shape[2] )  #RNN cell is used here #uses lvl0input and the hiddenstate
 
             # for a 2 layer rnn you do this for every kk, but you do this when you are *at the last layer of the rnn* for the current sequence index kk
             # apply the output layer to the updated state
