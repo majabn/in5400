@@ -347,6 +347,7 @@ class RNNsimpleCell(nn.Module):
             state_new: The updated hidden state of the recurrent cell. Shape [batch_size, hidden_state_sizes]
 
         """
+        state_old = state_old.to(device='cuda')
         x2 = torch.cat((x, state_old), dim=1)
         state_new = torch.tanh(torch.mm(x2, self.weight) + self.bias)
         return state_new
