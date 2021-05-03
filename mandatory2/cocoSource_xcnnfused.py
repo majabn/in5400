@@ -84,7 +84,7 @@ class imageCaptionModel(nn.Module):
 
         imgfeat_processed = self.inputlayer(cnn_features)
         batch_size = cnn_features.shape[0]
-        print(batch_size)
+        #print(batch_size)
 
 
         if current_hidden_state is None:
@@ -141,7 +141,7 @@ class RNN_onelayer_simplified(nn.Module):
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
             #note that      current_state has 3 dims ( ...len(current_state.shape)==3... ) with first dimension having only 1 element, while the rnn cell needs a state with 2 dims as input
             #TODO
-            print(current_state.shape, lvl0input.shape)
+            #print(current_state.shape, lvl0input.shape)
             updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state.squeeze())  #RNN cell is used here #uses lvl0input and the hiddenstate
 
             # for a 2 layer rnn you do this for every kk, but you do this when you are *at the last layer of the rnn* for the current sequence index kk
