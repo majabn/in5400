@@ -60,7 +60,8 @@ class imageCaptionModel(nn.Module):
           self.rnn = RNN_onelayer_simplified(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
 
         else:
-          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers)
+          #self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers)
+          self.rnn = RNN(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers, cell_type=self.cell_type)
         return
 
     def forward(self, cnn_features, xTokens, is_train, current_hidden_state=None):
@@ -231,7 +232,7 @@ class RNN_onelayer_simplified(nn.Module):
 
 
 class RNN(nn.Module):
-    def __init__(self, input_size, hidden_state_size, num_rnn_layers, cell_type='GRU'):
+    def __init__(self, input_size, hidden_state_size, num_rnn_layers, cell_type='LSTM'):
         super(RNN, self).__init__()
         """
         Args:
@@ -263,6 +264,12 @@ class RNN(nn.Module):
             self.cells=nn.ModuleList()
             for i in range(self.num_rnn_layers):
                 self.cells.append(GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
+        elif self.cell_type == 'LSTM':
+            self.cells=nn.ModuleList()
+            for i in range(self.num_rnn_layers):
+                self.cells.append(LSTMCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
+            #self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
+            #self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
         else:
             #self.cells=nn.ModuleList([RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers)])
             #self.cells.append(RNNsimpleCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
@@ -308,6 +315,8 @@ class RNN(nn.Module):
 
         #current_state = list(torch.unbind(initial_hidden_state, dim=0))
         current_state = initial_hidden_state
+        if self.cell_type == 'LSTM':
+            current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
 
