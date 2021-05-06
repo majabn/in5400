@@ -1,6 +1,6 @@
 from utils.dataLoader import DataLoaderWrapper
 from utils.saverRestorer import SaverRestorer
-from utils.model import Model
+from utils.task2_model import Model
 from utils.trainer import Trainer
 from utils.validate import plotImagesAndCaptions
 from utils.validate_metrics import validateCaptions
