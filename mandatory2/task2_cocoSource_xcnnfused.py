@@ -213,7 +213,7 @@ class RNN(nn.Module):
         return
 
 
-    def forward(self, xTokens, baseimgfeat, initial_hidden_state, outputLayer, Embedding, is_train=True):
+    def forward(self, xTokens, baseimgfeat, initial_hidden_state, outputlayer, Embedding, is_train=True):
         """
         Args:
             xTokens:        shape [batch_size, truncated_backprop_length]
