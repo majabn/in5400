@@ -60,7 +60,7 @@ class imageCaptionModel(nn.Module):
           self.rnn = RNN_onelayer_simplified(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
 
         else:
-          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers, cell_type=self.cell_type)
+          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
         return
 
     def forward(self, cnn_features, xTokens, is_train, current_hidden_state=None):
@@ -148,7 +148,7 @@ class LSTM_twolayer(nn.Module):
 
             # update this at after consuming every sequence element
             current_state = updatedstate
-            
+
             if kk < seqLen - 1:
                 if is_train == True:
                     tokens_vector = embed_input_vec[:,kk+1,:]
