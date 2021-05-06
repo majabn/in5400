@@ -249,9 +249,9 @@ class RNN(nn.Module):
             #update the hidden cell state for every layer with inputs depending on the layer index
             # if you are at the last layer, then produce logitskk, tokens , run a             logits_series.append(logitskk), see the simplified rnn for the one layer version
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
-            updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])
+            updatedstate[0,:,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])
             for i in range(1,self.num_rnn_layers):
-                updatedstate[i,:] = self.cells[i].forward(x=updatedstate[i-1,:], state_old=current_state[i,:])
+                updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:], state_old=current_state[i,:,:])
 
             logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:])
             tokens = torch.argmax(logitskk, dim=1)
