@@ -46,7 +46,7 @@ class imageCaptionModel(nn.Module):
         )
 
 
-        self.simplifiedrnn = True
+        self.simplifiedrnn = False
 
         if True == self.simplifiedrnn:
           if self.cell_type !='RNN':
@@ -190,13 +190,18 @@ class RNN(nn.Module):
 
 
         #TODO
-        input_size_list = []
+        input_size_list = [hidden_state_size for _ in range(num_rnn_layers+1)]
+        input_size_list[0] = input_size
         # input_size_list should have a length equal to the number of layers and input_size_list[i] should contain the input size for layer i
 
        #TODO
         # Your task is to create a list (self.cells) of type "nn.ModuleList" and populated it with cells of type "self.cell_type" - depending on the number of rnn layers
-        self.cells = None
-
+        if self.cell_type == 'GRU':
+            self.cells=nn.ModuleList([GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(num_rnn_layers-1)])
+            #self.cells.append(GRUCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
+        else:
+            self.cells=nn.ModuleList([RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(num_rnn_layers-1)])
+            #self.cells.append(RNNsimpleCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
         return
 
 
@@ -243,7 +248,14 @@ class RNN(nn.Module):
             #create your lvl0input,
             #update the hidden cell state for every layer with inputs depending on the layer index
             # if you are at the last layer, then produce logitskk, tokens , run a             logits_series.append(logitskk), see the simplified rnn for the one layer version
+            lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
+            updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])
+            for i in range(1,self.num_rnn_layers):
+                updatedstate[i,:] = self.cells[i].forward(x=updatedstate[i-1,:], state_old=current_state[i,:])
 
+            logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:])
+            tokens = torch.argmax(logitskk, dim=1)
+            logits_series.append(logitskk)
 
             current_state=updatedstate
             if kk < seqLen - 1:
@@ -288,14 +300,14 @@ class GRUCell(nn.Module):
         self.hidden_state_sizes = hidden_state_size
 
         # TODO:
-        self.weight_u = None
-        self.bias_u   = None
+        self.weight_u = nn.Parameter(torch.randn(hidden_state_sizes+input_size, hidden_state_sizes) / np.sqrt(input_size + hidden_state_size))
+        self.bias_u   = nn.Parameter(torch.zeros(1, hidden_state_sizes))
 
-        self.weight_r = None
-        self.bias_r   = None
+        self.weight_r = nn.Parameter(torch.randn(hidden_state_sizes+input_size, hidden_state_sizes) / np.sqrt(input_size + hidden_state_size))
+        self.bias_r   = nn.Parameter(torch.zeros(1, hidden_state_sizes))
 
-        self.weight = None
-        self.bias   = None
+        self.weight = nn.Parameter(torch.randn(hidden_state_sizes+input_size, hidden_state_sizes) / np.sqrt(input_size + hidden_state_size))
+        self.bias   = nn.Parameter(torch.zeros(1, hidden_state_sizes))
         return
 
     def forward(self, x, state_old):
@@ -309,7 +321,14 @@ class GRUCell(nn.Module):
 
         """
         # TODO:
-        state_new = None
+        state_old = state_old.to(device='cuda')
+        x2 = torch.cat((x, state_old), dim=1)
+
+        r_t = torch.sigmoid(torch.mm(x2, self.weight_r) + self.bias_r)
+        z_t = torch.sigmoid(torch.mm(x2, self.weight_u) + self.bias_u)
+
+        candidate = torch.tanh(torch.mm(torch.cat((x, state_old * r_t), dim=1), self.weight) + self.bias)
+        state_new = z_t * state_old + (1 - z_t) * candidate
         return state_new
 
 ######################################################################################################################
