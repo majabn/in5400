@@ -105,7 +105,7 @@ class imageCaptionModel(nn.Module):
 
 class LSTM_twolayer(nn.Module):
     def __init__(self, input_size, hidden_state_size):
-        super(RNN_onelayer_simplified, self).__init__()
+        super(LSTM_twolayer, self).__init__()
 
         self.input_size        = input_size
         self.hidden_state_size = hidden_state_size
