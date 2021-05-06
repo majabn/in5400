@@ -60,7 +60,7 @@ class imageCaptionModel(nn.Module):
           self.rnn = RNN_onelayer_simplified(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
 
         else:
-          self.rnn = RNN(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers, cell_type=self.cell_type)
+          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers, cell_type=self.cell_type)
         return
 
     def forward(self, cnn_features, xTokens, is_train, current_hidden_state=None):
@@ -101,6 +101,66 @@ class imageCaptionModel(nn.Module):
         return logits, current_hidden_state_out
 
 ######################################################################################################################
+
+
+class LSTM_twolayer(nn.Module):
+    def __init__(self, input_size, hidden_state_size):
+        super(RNN_onelayer_simplified, self).__init__()
+
+        self.input_size        = input_size
+        self.hidden_state_size = hidden_state_size
+
+        self.cells=nn.ModuleList()
+        self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
+        self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
+
+    def forward(self, xTokens, baseimgfeat, initial_hidden_state, outputlayer, Embedding, is_train=True):
+
+        if is_train==True:
+            seqLen = xTokens.shape[1] #truncated_backprop_length
+        else:
+            seqLen = 40 #Max sequence length to be generated
+
+        # get input embedding vectors for the whole sequence
+        embed_input_vec = Embedding(input=xTokens )     #(batch, seq, feature = 300)
+
+        # first input token, that why indexing by [:,0,:]
+        tokens_vector = embed_input_vec[:,0,:] #(batch,  feature )
+
+        # Use for loops to run over "seqLen" and "self.num_rnn_layers" to calculate logits
+        logits_series = []
+
+        current_state = initial_hidden_state
+        current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
+        for kk in range(seqLen):
+            updatedstate = torch.zeros_like(current_state)
+
+            #TODO
+            lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
+            updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
+            updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:], state_old=current_state[1,:,:])
+
+            logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size]) #note: for LSTM you use only the part which corresponds to the hidden state
+            # find the next predicted output element
+            tokens = torch.argmax(logitskk, dim=1)
+            logits_series.append(logitskk)
+
+
+            # update this at after consuming every sequence element
+            current_state = updatedstate
+            
+            if kk < seqLen - 1:
+                if is_train == True:
+                    tokens_vector = embed_input_vec[:,kk+1,:]
+                elif is_train == False:
+                    tokens_vector = Embedding(tokens)
+
+
+        # Produce outputs
+        logits        = torch.stack(logits_series, dim=1)
+
+        return logits, current_state
+
 
 
 class RNN_onelayer_simplified(nn.Module):
@@ -399,17 +459,17 @@ class LSTMCell(nn.Module):
         self.hidden_state_size = hidden_state_size
 
         # TODO:
-        self.weight_f = None
-        self.bias_f  = None
+        self.weight_f = nn.Parameter(torch.randn(hidden_state_size+input_size, hidden_state_size) / np.sqrt(input_size + hidden_state_size))
+        self.bias_f  = nn.Parameter(torch.zeros(1, hidden_state_size))
 
-        self.weight_i = None
-        self.bias_i  = None
+        self.weight_i = nn.Parameter(torch.randn(hidden_state_size+input_size, hidden_state_size) / np.sqrt(input_size + hidden_state_size))
+        self.bias_i  = nn.Parameter(torch.zeros(1, hidden_state_size))
 
-        self.weight_meminput = None
-        self.bias_meminput   = None
+        self.weight_meminput = nn.Parameter(torch.randn(hidden_state_size+input_size, hidden_state_size) / np.sqrt(input_size + hidden_state_size))
+        self.bias_meminput   = nn.Parameter(torch.zeros(1, hidden_state_size))
 
-        self.weight_o = None
-        self.bias_o   = None
+        self.weight_o = nn.Parameter(torch.randn(hidden_state_size+input_size, hidden_state_size) / np.sqrt(input_size + hidden_state_size))
+        self.bias_o   = nn.Parameter(torch.zeros(1, hidden_state_size))
 
         return
 
@@ -424,8 +484,20 @@ class LSTMCell(nn.Module):
 
         """
         # TODO:
-        state_new     = None
+        state_old = state_old.to(device='cuda')
+        hidden_in = state_old[:,:self.hidden_state_size]
+        memory_in = state_old[:,self.hidden_state_size:]
+        x2 = torch.cat((x, hidden_in), dim=1)
 
+        input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
+        forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
+        output_gate = torch.sigmoid(torch.mm(x2, self.weight_o) + self.bias_o)
+
+        candidate = torch.tanh(torch.mm(x2, self.weight_meminput) + self.bias_meminput)
+        memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
+        hidden_state = torch.tanh(memory_cell) * output_gate
+
+        state_new     = torch.cat((hidden_in, memory_in), dim=2)
         return state_new
 
 
