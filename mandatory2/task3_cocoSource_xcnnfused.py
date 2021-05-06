@@ -497,7 +497,7 @@ class LSTMCell(nn.Module):
         memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
         hidden_state = torch.tanh(memory_cell) * output_gate
 
-        state_new     = torch.cat((hidden_in, memory_in), dim=2)
+        state_new     = torch.cat((hidden_in, memory_in), dim=1)
         return state_new
 
 
