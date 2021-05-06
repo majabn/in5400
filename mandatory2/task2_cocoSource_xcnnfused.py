@@ -497,7 +497,7 @@ class LSTMCell(nn.Module):
         hidden_in = state_old[:,:self.hidden_state_size]
         memory_in = state_old[:,self.hidden_state_size:]
         x2 = torch.cat((x, hidden_in), dim=1)
-        print(x2.shape, self.weight_i.shape)
+        print(x2)
 
         input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
         forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
