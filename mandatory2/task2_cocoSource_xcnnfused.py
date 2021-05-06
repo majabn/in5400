@@ -197,13 +197,19 @@ class RNN(nn.Module):
        #TODO
         # Your task is to create a list (self.cells) of type "nn.ModuleList" and populated it with cells of type "self.cell_type" - depending on the number of rnn layers
         if self.cell_type == 'GRU':
-            self.cells=nn.ModuleList([GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers-1)])
-            print(self.cells[0])
+            #self.cells=nn.ModuleList([GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers)])
+            #print(self.cells[0])
             #self.cells.append(GRUCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
+            self.cells=nn.ModuleList()
+            for i in range(self.num_rnn_layers):
+                self.cells.append(GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
         else:
-            self.cells=nn.ModuleList([RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers-1)])
+            #self.cells=nn.ModuleList([RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers)])
             #self.cells.append(RNNsimpleCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
-            print(self.cells[0])
+            #print(self.cells[0])
+            self.cells=nn.ModuleList()
+            for i in range(self.num_rnn_layers):
+                self.cells.append(RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
         return
 
 
