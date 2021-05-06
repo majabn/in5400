@@ -1,6 +1,6 @@
 from torch import optim
 
-from task2_cocoSource_xcnnfused import loss_fn
+from cocoSource_xcnnfused import loss_fn
 
 class Model():
     def __init__(self, config, modelParam, imageCaptionModel):
