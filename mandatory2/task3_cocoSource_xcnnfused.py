@@ -60,7 +60,7 @@ class imageCaptionModel(nn.Module):
           self.rnn = RNN_onelayer_simplified(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
 
         else:
-          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes)
+          self.rnn = LSTM_twolayer(input_size=self.embedding_size  + self.nnmapsize , hidden_state_size=self.hidden_state_sizes, num_rnn_layers=self.num_rnn_layers)
         return
 
     def forward(self, cnn_features, xTokens, is_train, current_hidden_state=None):
@@ -104,7 +104,7 @@ class imageCaptionModel(nn.Module):
 
 
 class LSTM_twolayer(nn.Module):
-    def __init__(self, input_size, hidden_state_size):
+    def __init__(self, input_size, hidden_state_size, num_rnn_layers):
         super(LSTM_twolayer, self).__init__()
 
         self.input_size        = input_size
