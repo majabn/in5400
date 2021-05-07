@@ -330,7 +330,7 @@ class RNN(nn.Module):
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
             if self.cell_type == 'LSTM':
                 updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
-                updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,:self.hidden_state_size], state_old=current_state[1,:])
+                updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:][:,:self.hidden_state_size], state_old=current_state[1,:])
 
                 logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
             else:
