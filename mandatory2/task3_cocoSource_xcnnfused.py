@@ -502,6 +502,7 @@ class LSTMCell(nn.Module):
         """
         # TODO:
         state_old = state_old.to(device='cuda')
+        print("X: ", x.shape)
         hidden_in = state_old[:,:self.hidden_state_size]
         print("Hidden in: ", hidden_in.shape)
         memory_in = state_old[:,self.hidden_state_size:]
