@@ -317,7 +317,7 @@ class RNN(nn.Module):
         current_state = initial_hidden_state
         if self.cell_type == 'LSTM':
             current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
-            print(current_state.shape)
+            #print(current_state.shape)
             
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
@@ -503,11 +503,11 @@ class LSTMCell(nn.Module):
         # TODO:
         state_old = state_old.to(device='cuda')
         hidden_in = state_old[:,:self.hidden_state_size]
-        print(hidden_in.shape)
+        #print(hidden_in.shape)
         memory_in = state_old[:,self.hidden_state_size:]
-        print(memory_in.shape)
+        #print(memory_in.shape)
         x2 = torch.cat((x, hidden_in), dim=1)
-        print(x2.shape)
+        #print(x2.shape)
 
         input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
         forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
