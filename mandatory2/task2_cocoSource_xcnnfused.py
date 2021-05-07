@@ -317,6 +317,7 @@ class RNN(nn.Module):
         current_state = initial_hidden_state
         if self.cell_type == 'LSTM':
             current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
+            print(current_state.shape)
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
 
