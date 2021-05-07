@@ -503,27 +503,27 @@ class LSTMCell(nn.Module):
         """
         # TODO:
         state_old = state_old.to(device='cuda')
-        print("X: ", x.shape)
+        #print("X: ", x.shape)
         hidden_in = state_old[:,:self.hidden_state_size]
-        print("Hidden in: ", hidden_in.shape)
+        #print("Hidden in: ", hidden_in.shape)
         memory_in = state_old[:,self.hidden_state_size:]
-        print("Memory in: ", memory_in.shape)
+        #print("Memory in: ", memory_in.shape)
         x2 = torch.cat((x, hidden_in), dim=1)
-        print("X2: ", x2.shape)
+        #print("X2: ", x2.shape)
 
         input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
-        print("Input gate: ", input_gate.shape)
+        #print("Input gate: ", input_gate.shape)
         forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
-        print("Forget gate: ", forget_gate.shape)
+        #print("Forget gate: ", forget_gate.shape)
         output_gate = torch.sigmoid(torch.mm(x2, self.weight_o) + self.bias_o)
-        print("Output gate: ", output_gate.shape)
+        #print("Output gate: ", output_gate.shape)
 
         candidate = torch.tanh(torch.mm(x2, self.weight_meminput) + self.bias_meminput)
-        print("Candidate: ", candidate.shape)
+        #print("Candidate: ", candidate.shape)
         memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
-        print("Memory cell: ", input_gate.shape)
+        #print("Memory cell: ", input_gate.shape)
         hidden_state = torch.tanh(memory_cell) * output_gate
-        print("Hidden state: ", input_gate.shape, "\n")
+        #print("Hidden state: ", input_gate.shape, "\n")
 
         state_new     = torch.cat((hidden_in, memory_in), dim=1)
         return state_new
