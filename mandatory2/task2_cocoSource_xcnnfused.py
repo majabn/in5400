@@ -495,9 +495,11 @@ class LSTMCell(nn.Module):
         # TODO:
         state_old = state_old.to(device='cuda')
         hidden_in = state_old[:,:self.hidden_state_size]
+        print(hidden_in.shape)
         memory_in = state_old[:,self.hidden_state_size:]
+        print(memory_in.shape)
         x2 = torch.cat((x, hidden_in), dim=1)
-        print(x2)
+        print(x2.shape)
 
         input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
         forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
