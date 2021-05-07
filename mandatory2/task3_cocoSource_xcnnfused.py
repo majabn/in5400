@@ -315,10 +315,10 @@ class RNN(nn.Module):
 
         #current_state = list(torch.unbind(initial_hidden_state, dim=0))
         current_state = initial_hidden_state
-        if self.cell_type == 'LSTM':
+        if self.cell_type == 'LSTM' and initial_hidden_state.shape[2] == self.hidden_state_size:
             current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
             #print(current_state.shape)
-            
+
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
 
@@ -330,16 +330,16 @@ class RNN(nn.Module):
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
             if self.cell_type == 'LSTM':
                 updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
-                updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,self.hidden_state_size:], state_old=current_state[1,:])
+                updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,:self.hidden_state_size], state_old=current_state[1,:])
 
-                logitskk = outputlayer(updatedstate[1,:,self.hidden_state_size:])
+                logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
             else:
                 updatedstate[0,:,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])
                 for i in range(1,self.num_rnn_layers):
                     updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:], state_old=current_state[i,:,:])
 
                 logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:,:])
-                
+
             tokens = torch.argmax(logitskk, dim=1)
             logits_series.append(logitskk)
 
