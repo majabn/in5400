@@ -331,19 +331,19 @@ class RNN(nn.Module):
             #update the hidden cell state for every layer with inputs depending on the layer index
             # if you are at the last layer, then produce logitskk, tokens , run a             logits_series.append(logitskk), see the simplified rnn for the one layer version
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
-            if self.cell_type == 'LSTM':
-                updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
-                #updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,:self.hidden_state_size], state_old=current_state[1,:])
-                for i in range(1,self.num_rnn_layers):
-                    updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
+            #if self.cell_type == 'LSTM':
+            updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
+            #updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,:self.hidden_state_size], state_old=current_state[1,:])
+            for i in range(1,self.num_rnn_layers):
+                updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
 
-                logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
-            else:
+            logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
+            """else:
                 updatedstate[0,:,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])
                 for i in range(1,self.num_rnn_layers):
                     updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:], state_old=current_state[i,:,:])
 
-                logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:,:])
+                logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:,:])"""
 
             tokens = torch.argmax(logitskk, dim=1)
             logits_series.append(logitskk)
