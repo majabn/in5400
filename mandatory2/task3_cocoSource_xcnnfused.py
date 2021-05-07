@@ -91,7 +91,10 @@ class imageCaptionModel(nn.Module):
         if current_hidden_state is None:
             #TODO
             # initialize initial_hidden_state=  with correct dims, depends on cellyupe
-            initial_hidden_state=torch.zeros([self.num_rnn_layers, batch_size, self.hidden_state_sizes]).to(device='cuda')
+            if self.cell_type == 'LSTM':
+                initial_hidden_state=torch.zeros([self.num_rnn_layers, batch_size, self.hidden_state_sizes*2]).to(device='cuda')
+            else:
+                initial_hidden_state=torch.zeros([self.num_rnn_layers, batch_size, self.hidden_state_sizes]).to(device='cuda')
 
         else:
             initial_hidden_state = current_hidden_state
@@ -315,8 +318,8 @@ class RNN(nn.Module):
 
         #current_state = list(torch.unbind(initial_hidden_state, dim=0))
         current_state = initial_hidden_state
-        if self.cell_type == 'LSTM' and initial_hidden_state.shape[2] == self.hidden_state_size:
-            current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
+        #if self.cell_type == 'LSTM' and initial_hidden_state.shape[2] == self.hidden_state_size:
+            #current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
             #print(current_state.shape)
 
         for kk in range(seqLen):
