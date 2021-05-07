@@ -107,64 +107,6 @@ class imageCaptionModel(nn.Module):
 ######################################################################################################################
 
 
-class LSTM_twolayer(nn.Module):
-    def __init__(self, input_size, hidden_state_size, num_rnn_layers):
-        super(LSTM_twolayer, self).__init__()
-
-        self.input_size        = input_size
-        self.hidden_state_size = hidden_state_size
-
-        self.cells=nn.ModuleList()
-        self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
-        self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
-
-    def forward(self, xTokens, baseimgfeat, initial_hidden_state, outputlayer, Embedding, is_train=True):
-
-        if is_train==True:
-            seqLen = xTokens.shape[1] #truncated_backprop_length
-        else:
-            seqLen = 40 #Max sequence length to be generated
-
-        # get input embedding vectors for the whole sequence
-        embed_input_vec = Embedding(input=xTokens )     #(batch, seq, feature = 300)
-
-        # first input token, that why indexing by [:,0,:]
-        tokens_vector = embed_input_vec[:,0,:] #(batch,  feature )
-
-        # Use for loops to run over "seqLen" and "self.num_rnn_layers" to calculate logits
-        logits_series = []
-
-        current_state = initial_hidden_state
-        current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
-        for kk in range(seqLen):
-            updatedstate = torch.zeros_like(current_state)
-
-            #TODO
-            lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
-            updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
-            updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:], state_old=current_state[1,:,:])
-
-            logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size]) #note: for LSTM you use only the part which corresponds to the hidden state
-            # find the next predicted output element
-            tokens = torch.argmax(logitskk, dim=1)
-            logits_series.append(logitskk)
-
-
-            # update this at after consuming every sequence element
-            current_state = updatedstate
-
-            if kk < seqLen - 1:
-                if is_train == True:
-                    tokens_vector = embed_input_vec[:,kk+1,:]
-                elif is_train == False:
-                    tokens_vector = Embedding(tokens)
-
-
-        # Produce outputs
-        logits        = torch.stack(logits_series, dim=1)
-
-        return logits, current_state
-
 
 
 class RNN_onelayer_simplified(nn.Module):
@@ -262,7 +204,6 @@ class RNN(nn.Module):
         # Your task is to create a list (self.cells) of type "nn.ModuleList" and populated it with cells of type "self.cell_type" - depending on the number of rnn layers
         if self.cell_type == 'GRU':
             #self.cells=nn.ModuleList([GRUCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers)])
-            #print(self.cells[0])
             #self.cells.append(GRUCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
             self.cells=nn.ModuleList()
             for i in range(self.num_rnn_layers):
@@ -271,12 +212,9 @@ class RNN(nn.Module):
             self.cells=nn.ModuleList()
             for i in range(self.num_rnn_layers):
                 self.cells.append(LSTMCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
-            #self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
-            #self.cells.append(LSTMCell(hidden_state_size=self.hidden_state_size, input_size= self.input_size))
         else:
             #self.cells=nn.ModuleList([RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i] ) for i in range(self.num_rnn_layers)])
             #self.cells.append(RNNsimpleCell(hidden_state_size=self.hidden_state_size, input_size=self.hidden_state_size ))
-            #print(self.cells[0])
             self.cells=nn.ModuleList()
             for i in range(self.num_rnn_layers):
                 self.cells.append(RNNsimpleCell(hidden_state_size=input_size_list[i+1], input_size=input_size_list[i]))
@@ -318,10 +256,6 @@ class RNN(nn.Module):
 
         #current_state = list(torch.unbind(initial_hidden_state, dim=0))
         current_state = initial_hidden_state
-        #if self.cell_type == 'LSTM' and initial_hidden_state.shape[2] == self.hidden_state_size:
-            #current_state = torch.zeros_like(torch.cat((current_state, current_state), dim=2))
-            #print(current_state.shape)
-
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
 
@@ -331,19 +265,12 @@ class RNN(nn.Module):
             #update the hidden cell state for every layer with inputs depending on the layer index
             # if you are at the last layer, then produce logitskk, tokens , run a             logits_series.append(logitskk), see the simplified rnn for the one layer version
             lvl0input = torch.cat((baseimgfeat, tokens_vector), dim=1)
-            #if self.cell_type == 'LSTM':
             updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
-            #updatedstate[1,:] = self.cells[1].forward(x=updatedstate[0,:,:self.hidden_state_size], state_old=current_state[1,:])
+
             for i in range(1,self.num_rnn_layers):
                 updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
 
             logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
-            """else:
-                updatedstate[0,:,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:,:])
-                for i in range(1,self.num_rnn_layers):
-                    updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:], state_old=current_state[i,:,:])
-
-                logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:,:])"""
 
             tokens = torch.argmax(logitskk, dim=1)
             logits_series.append(logitskk)
