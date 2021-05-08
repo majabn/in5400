@@ -270,7 +270,7 @@ class RNN(nn.Module):
             for i in range(1,self.num_rnn_layers):
                 updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
 
-            logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
+            logitskk = outputlayer(updatedstate[self.num_rnn_layers-1,:,:self.hidden_state_size])
 
             tokens = torch.argmax(logitskk, dim=1)
             logits_series.append(logitskk)
@@ -339,7 +339,7 @@ class GRUCell(nn.Module):
 
         """
         # TODO:
-        state_old = state_old.to(device='cuda')
+        #state_old = state_old.to(device='cuda')
         x2 = torch.cat((x, state_old), dim=1)
 
         r_t = torch.sigmoid(torch.mm(x2, self.weight_r) + self.bias_r)
@@ -442,23 +442,19 @@ class LSTMCell(nn.Module):
         #print("Memory in: ", memory_in.shape)
         x2 = torch.cat((x, hidden_in), dim=1)
         #print("X2: ", x2.shape)
-        sigm = nn.Sigmoid()
 
-        input_gate = sigm(torch.mm(x2, self.weight_i) + self.bias_i)
+        input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
         #print("Input gate: ", input_gate.shape)
-        forget_gate = sigm(torch.mm(x2, self.weight_f) + self.bias_f)
+        forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
         #print("Forget gate: ", forget_gate.shape)
-        output_gate = sigm(torch.mm(x2, self.weight_o) + self.bias_o)
+        output_gate = torch.sigmoid(torch.mm(x2, self.weight_o) + self.bias_o)
         #print("Output gate: ", output_gate.shape)
 
         candidate = torch.tanh(torch.mm(x2, self.weight_meminput) + self.bias_meminput)
-        #print("Candidate: ", candidate.shape)
         memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
-        #print("Memory cell: ", input_gate.shape)
         hidden_state = torch.tanh(memory_cell) * output_gate
-        #print("Hidden state: ", input_gate.shape, "\n")
 
-        state_new     = torch.cat((hidden_in, memory_in), dim=1)
+        state_new     = torch.cat((hidden_state, memory_cell), dim=1)
         return state_new
 
 
