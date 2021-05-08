@@ -452,7 +452,7 @@ class LSTMCell(nn.Module):
 
         candidate = torch.tanh(torch.mm(x2, self.weight_meminput) + self.bias_meminput)
         #print("Candidate: ", candidate.shape)
-        memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
+        memory_cell = torch.mul(memory_in, forget_gate) + torch.mul(candidate, input_gate)
         #print("Memory cell: ", input_gate.shape)
         hidden_state = torch.tanh(memory_cell) * output_gate
         #print("Hidden state: ", input_gate.shape, "\n")
