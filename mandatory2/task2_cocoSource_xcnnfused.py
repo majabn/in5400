@@ -329,7 +329,7 @@ class GRUCell(nn.Module):
 
         """
         # TODO:
-        state_old = state_old.to(device='cuda')
+        #state_old = state_old.to(device='cuda')
         x2 = torch.cat((x, state_old), dim=1)
 
         r_t = torch.sigmoid(torch.mm(x2, self.weight_r) + self.bias_r)
