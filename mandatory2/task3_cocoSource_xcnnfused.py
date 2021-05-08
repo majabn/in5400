@@ -268,7 +268,6 @@ class RNN(nn.Module):
             updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
 
             for i in range(1,self.num_rnn_layers):
-                print(i)
                 updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
 
             logitskk = outputlayer(updatedstate[1,:,:self.hidden_state_size])
@@ -435,7 +434,7 @@ class LSTMCell(nn.Module):
 
         """
         # TODO:
-        state_old = state_old.to(device='cuda')
+        #state_old = state_old.to(device='cuda')
         #print("X: ", x.shape)
         hidden_in = state_old[:,:self.hidden_state_size]
         #print("Hidden in: ", hidden_in.shape)
