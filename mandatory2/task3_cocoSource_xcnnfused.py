@@ -442,17 +442,18 @@ class LSTMCell(nn.Module):
         #print("Memory in: ", memory_in.shape)
         x2 = torch.cat((x, hidden_in), dim=1)
         #print("X2: ", x2.shape)
+        sigm = nn.Sigmoid()
 
-        input_gate = torch.sigmoid(torch.mm(x2, self.weight_i) + self.bias_i)
+        input_gate = sigm(torch.mm(x2, self.weight_i) + self.bias_i)
         #print("Input gate: ", input_gate.shape)
-        forget_gate = torch.sigmoid(torch.mm(x2, self.weight_f) + self.bias_f)
+        forget_gate = sigm(torch.mm(x2, self.weight_f) + self.bias_f)
         #print("Forget gate: ", forget_gate.shape)
-        output_gate = torch.sigmoid(torch.mm(x2, self.weight_o) + self.bias_o)
+        output_gate = sigm(torch.mm(x2, self.weight_o) + self.bias_o)
         #print("Output gate: ", output_gate.shape)
 
         candidate = torch.tanh(torch.mm(x2, self.weight_meminput) + self.bias_meminput)
         #print("Candidate: ", candidate.shape)
-        memory_cell = torch.mul(memory_in, forget_gate) + torch.mul(candidate, input_gate)
+        memory_cell = (memory_in * forget_gate) + (candidate * input_gate)
         #print("Memory cell: ", input_gate.shape)
         hidden_state = torch.tanh(memory_cell) * output_gate
         #print("Hidden state: ", input_gate.shape, "\n")
