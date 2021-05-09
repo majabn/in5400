@@ -286,7 +286,7 @@ class RNN(nn.Module):
             for i in range(1,self.num_rnn_layers):
                 if i == self.num_rnn_layers - 1:
                     att = attentionlayer(updatedstate[i-1,:,:].clone())
-                    updatedstate[i,:,:] = self.cells[i].forward(x=(torch.cat(updatedstate[i-1,:,:self.hidden_state_size], att), dim=1), state_old=current_state[i,:,:])
+                    updatedstate[i,:,:] = self.cells[i].forward(x=(torch.cat(updatedstate[i-1,:,:self.hidden_state_size], att)), dim=1), state_old=current_state[i,:,:])
                 else:
                     updatedstate[i,:,:] = self.cells[i].forward(x=updatedstate[i-1,:,:self.hidden_state_size], state_old=current_state[i,:,:])
 
