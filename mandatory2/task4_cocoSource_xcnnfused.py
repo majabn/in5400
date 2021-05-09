@@ -92,6 +92,7 @@ class imageCaptionModel(nn.Module):
 
         print(cnn_features.shape)
         print(cnn_features.permute(0,2,1).shape)
+        print(self.hidden_state_sizes)
         exit()
 
         imgfeat_processed = self.inputlayer(cnn_features.permute(0,2,1))
