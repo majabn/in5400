@@ -41,7 +41,7 @@ class imageCaptionModel(nn.Module):
 
         self.inputlayer = nn.Sequential(
                 nn.Dropout(0.25),
-                nn.Conv1d(self.number_of_cnn_features, self.nnmapsize, 1),
+                nn.Conv1d(10, self.nnmapsize, 1),
                 nn.BatchNorm1d(self.nnmapsize),
                 nn.LeakyReLU()
         )
