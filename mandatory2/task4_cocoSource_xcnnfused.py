@@ -92,7 +92,7 @@ class imageCaptionModel(nn.Module):
 
         #print(cnn_features.shape)
 
-        imgfeat_processed = self.inputlayer(cnn_features)
+        imgfeat_processed = self.inputlayer(cnn_features.permute(0,2,1))
         batch_size = cnn_features.shape[0]
         #print(batch_size)
 
