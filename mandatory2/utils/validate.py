@@ -70,11 +70,11 @@ def plotImagesAndCaptions(model, modelParam, config, dataLoader):
     img = mpimg.imread(imgpath)
     plt.ion()
     ax.imshow(img)
-    folder = 'images_' + modelParam['modelName'] + 'img.png'
+    folder = 'images_' + modelParam['modelName']
     import os
     if not os.path.exists(folder):
         os.makedirs(folder)
-    plt.savefig(folder)
+    plt.savefig(folder + 'img.png')
     aa = 1
     return
 
