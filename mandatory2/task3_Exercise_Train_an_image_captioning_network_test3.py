@@ -46,7 +46,7 @@ if __name__ == '__main__':
         'numbOfCPUThreadsUsed': 10,  # Number of cpu threads use in the dataloader
         'numbOfEpochs': 99,  # Number of epochs
         'data_dir': data_dir,  # data directory
-        'img_dir': 'task3_loss_images_test/',
+        'img_dir': 'loss_images_test/',
         'modelsDir': 'task3_storedModels_test/',
         'modelName': 'model_3/',  # name of your trained model
         'restoreModelLast': 0,
