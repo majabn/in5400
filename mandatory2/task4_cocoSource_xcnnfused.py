@@ -91,6 +91,7 @@ class imageCaptionModel(nn.Module):
         # Remember that each rnn cell needs its own initial state.
 
         print(cnn_features.shape)
+        print(cnn_features.permute(0,2,1).shape)
         exit()
 
         imgfeat_processed = self.inputlayer(cnn_features.permute(0,2,1))
