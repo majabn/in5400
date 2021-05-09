@@ -28,7 +28,7 @@ def main(config, modelParam):
 
     #plotImagesAndCaptions
     if modelParam['inference'] == True:
-        #plotImagesAndCaptions(model, modelParam, config, dataLoader)
+        plotImagesAndCaptions(model, modelParam, config, dataLoader)
         validateCaptions(model, modelParam, config, dataLoader)
 
     return
@@ -48,7 +48,7 @@ if __name__ == '__main__':
         'data_dir': data_dir,  # data directory
         'img_dir': 'loss_images_test/',
         'modelsDir': 'storedModels_test/',
-        'modelName': 'model_0/',  # name of your trained model
+        'modelName': 'model_2/',  # name of your trained model
         'restoreModelLast': 0,
         'restoreModelBest': 0,
         'modeSetups': [['train', True], ['val', True]],
