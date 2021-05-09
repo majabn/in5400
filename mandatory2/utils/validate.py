@@ -74,7 +74,8 @@ def plotImagesAndCaptions(model, modelParam, config, dataLoader):
     import os
     if not os.path.exists(folder):
         os.makedirs(folder)
-    plt.savefig(folder + 'img.png')
+    os.chdir(folder)
+    plt.savefig('img.png')
     aa = 1
     return
 
