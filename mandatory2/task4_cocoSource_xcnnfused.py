@@ -90,7 +90,8 @@ class imageCaptionModel(nn.Module):
         # Get "initial_hidden_state" shape[num_rnn_layers, batch_size, hidden_state_sizes].
         # Remember that each rnn cell needs its own initial state.
 
-        #print(cnn_features.shape)
+        print(cnn_features.shape)
+        exit()
 
         imgfeat_processed = self.inputlayer(cnn_features.permute(0,2,1))
         batch_size = cnn_features.shape[0]
