@@ -41,14 +41,14 @@ class imageCaptionModel(nn.Module):
 
         self.inputlayer = nn.Sequential(
                 nn.Dropout(0.25),
-                nn.Conv1d(self.hidden_state_sizes, self.nnmapsize, 1),
+                nn.Conv1d(self.number_of_cnn_features, self.nnmapsize, 1),
                 nn.BatchNorm1d(self.nnmapsize),
                 nn.LeakyReLU()
         )
 
         self.attentionlayer = nn.Sequential(
                 nn.Dropout(0.25),
-                nn.Linear(10, 50),
+                nn.Linear(self.hidden_state_sizes*2, 50),
                 nn.LeakyReLU(),
                 nn.Linear(50, 10),
                 nn.Softmax()
@@ -90,10 +90,10 @@ class imageCaptionModel(nn.Module):
         # Get "initial_hidden_state" shape[num_rnn_layers, batch_size, hidden_state_sizes].
         # Remember that each rnn cell needs its own initial state.
 
-        print(cnn_features.shape)
-        print(cnn_features.permute(0,2,1).shape)
-        print(self.hidden_state_sizes)
-        exit()
+        #print(cnn_features.shape)
+        #print(cnn_features.permute(0,2,1).shape)
+        #print(self.hidden_state_sizes)
+        #exit()
 
         imgfeat_processed = self.inputlayer(cnn_features.permute(0,2,1))
         batch_size = cnn_features.shape[0]
