@@ -275,9 +275,9 @@ class RNN(nn.Module):
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
             m = nn.MaxPool1d(10)
-            max_baseimgfeat = m(baseimgfeat)
+            max_baseimgfeat = m(baseimgfeat).squeeze()
 
-            lvl0input = torch.cat((max_baseimgfeat, tokens_vector), dim=1).squeeze()
+            lvl0input = torch.cat((max_baseimgfeat, tokens_vector), dim=1)
             updatedstate[0,:] = self.cells[0].forward(x=lvl0input, state_old=current_state[0,:])  #RNN cell is used here #uses lvl0input and the hiddenstate
 
             for i in range(1,self.num_rnn_layers):
