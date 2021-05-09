@@ -274,7 +274,7 @@ class RNN(nn.Module):
 
         for kk in range(seqLen):
             updatedstate=torch.zeros_like(current_state)
-            m = nn.Maxpool1d(10)
+            m = nn.MaxPool1d(10)
             max_baseimgfeat = m(baseimgfeat)
 
             lvl0input = torch.cat((max_baseimgfeat, tokens_vector), dim=1)
