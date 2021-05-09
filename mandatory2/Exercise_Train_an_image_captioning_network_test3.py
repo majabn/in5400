@@ -28,7 +28,7 @@ def main(config, modelParam):
 
     #plotImagesAndCaptions
     if modelParam['inference'] == True:
-        #plotImagesAndCaptions(model, modelParam, config, dataLoader)
+        plotImagesAndCaptions(model, modelParam, config, dataLoader)
         validateCaptions(model, modelParam, config, dataLoader)
 
     return
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         'restoreModelBest': 0,
         'modeSetups': [['train', True], ['val', True]],
         'inNotebook': False,  # If running script in jupyter notebook
-        'inference': False
+        'inference': True
     }
 
     config = {
